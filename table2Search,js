@@ -1,0 +1,73 @@
+var table_id = "";
+var input_id = "";
+function createTable(jsonData) {
+  table_id = jsonData.tableId;
+  input_id = jsonData.inputId;
+  var div_part = "<div class='tableWithSearchBar'><input class='input_tableWithSearchBar' type='text' id='" + input_id + "' placeholder='Search for names..' title='Type in a name'></div><div class='tableWithSearchTable'><table class='table_tableWithSearchTable' id='" + table_id + "'>";
+  var table_head = "<thead><tr class='no_results_row'><td>No Result</td><td></td></tr></thead>";
+  var table_body = "<tbody>";
+  for (var i = 0; i < jsonData.inputProvider.length; i++) {
+    table_body += "<tr><td>" + jsonData.inputProvider[i] + "</td></tr>";
+  }
+  table_body += "</tbody";
+  div_part += table_head;
+  div_part += table_body;
+  div_part += "</table></div>";
+  $("#" + jsonData.divId).prepend(div_part);
+  searchAndNavi();
+}
+
+function searchAndNavi() {
+  var nextLen = $('#' + table_id + ' tbody tr.hoveredRow').nextAll('tr:visible').length;
+  var prevLen = $('#' + table_id + ' tbody tr.hoveredRow').prevAll('tr:visible').length;
+  $('#' + input_id + '').focus();
+  $('#' + table_id + ' tbody tr:visible').first().addClass('hoveredRow');
+  $('#' + input_id + '').keyup(function(e) {
+    if (e.which !== 40 && e.which !== 38) {
+      var input, filter, table, tr, td, i;
+      input = document.getElementById(input_id);
+      filter = input.value.toUpperCase();
+      table = document.getElementById(table_id);
+      tr = table.getElementsByTagName('tr');
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName('td')[0];
+        if (td) {
+          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = '';
+          } else {
+            tr[i].style.display = 'none';
+          }
+        }
+        $('#' + table_id + ' tbody').children('tr').removeClass('hoveredRow');
+        $('#' + table_id + ' tbody tr:visible').first().addClass('hoveredRow');
+      }
+    }
+    if ($('#' + table_id + ' tbody tr').prevAll('tr:visible').length > 0) {
+      var s = $('#' + table_id + ' tbody tr.hoveredRow').position();
+      $('.tableWithSearchTable').scrollTop(s.top);
+      $('.no_results_row').css("display", "none");
+    } else {
+      $('.no_results_row').css("display", "table-row");
+    }
+  });
+  $('#' + input_id).keydown(function(e) {
+    if ($('#' + table_id + ' tbody tr').prevAll('tr:visible').length > 0) {
+      nextLen = $('#' + table_id + ' tbody tr.hoveredRow').nextAll('tr:visible').length;
+      prevLen = $('#' + table_id + ' tbody tr.hoveredRow').prevAll('tr:visible').length;
+      var activetr = $('#' + table_id + ' tbody tr.hoveredRow');
+      if (e.which === 40 && nextLen > 0) {
+        $('#' + table_id + ' tbody').children('tr').removeClass('hoveredRow');
+        activetr.nextAll('tr:visible').first().addClass('hoveredRow');
+      } else if (e.which === 38 && prevLen > 0) {
+        $('#' + table_id + ' tbody').children('tr').removeClass('hoveredRow');
+        activetr.prevAll('tr:visible').first().addClass('hoveredRow');
+      }
+      var s = $('#' + table_id + ' tbody tr.hoveredRow').position();
+      $('.tableWithSearchTable').scrollTop(s.top);
+    }
+  });
+  $('#' + table_id + ' tbody tr').hover(function() {
+    $('#' + table_id + ' tbody').children('tr').removeClass('hoveredRow');
+    $(this).addClass("hoveredRow");
+  });
+}
