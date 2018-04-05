@@ -6,4 +6,5 @@ var jsondata = {
     "Germany", "India", "USA", "Sweden", "Canada", "Sri Lanka", "Italy"
   ]
 };
+
 createTable(jsondata);
