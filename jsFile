@@ -1,0 +1,9 @@
+var jsondata = {
+  "divId": "tableWithSearch_ID_1",
+  "tableId": "myTable",
+  "inputId": "myInput",
+  "inputProvider": [
+    "Germany", "India", "USA", "Sweden", "Canada", "Sri Lanka", "Italy"
+  ]
+};
+createTable(jsondata);
